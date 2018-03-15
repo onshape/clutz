@@ -76,9 +76,13 @@ public class DeclarationGeneratorTests {
       if (Arrays.asList("partial", "multifilePartial", "partialCrossModuleTypeImports")
           .contains(input.getParentFile().getName())) {
         subject.partialInput = true;
+        subject.debug = false;
       }
       if (input.getParentFile().getName().equals("partialCrossModuleTypeImports")) {
         subject.depgraph = "partialCrossModuleTypeImports/cross_module_type.depgraph";
+      }
+      if (input.getName().contains("async")) {
+        subject.debug = false;
       }
       subject.extraExternFile = getExternFileNameOrNull(input.getName());
       suite.addTest(new DeclarationTest(input.getName(), golden, subject));
@@ -137,7 +141,11 @@ public class DeclarationGeneratorTests {
 
   static String getTestFileText(final File input) throws IOException {
     String text = Files.asCharSource(input, Charsets.UTF_8).read();
-    if (input.getName().endsWith("_with_platform.d.ts")) {
+    // with incremental mode, _with_platform is going away, and a recent change makes our testing
+    // strategy for types_externs_with_platform not work, so special case it and remove when we
+    // stop doing _with_platform tests
+    if (input.getName().endsWith("_with_platform.d.ts")
+        && !input.getName().equals("types_externs_with_platform.d.ts")) {
       File platformGolden = getPackagePath().resolve("general_with_platform.d.ts").toFile();
       String platformGoldenText = Files.asCharSource(platformGolden, Charsets.UTF_8).read();
       if (text.contains(PLATFORM_MARKER)) {

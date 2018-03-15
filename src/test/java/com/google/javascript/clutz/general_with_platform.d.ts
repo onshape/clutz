@@ -1,4 +1,19 @@
 declare namespace ಠ_ಠ.clutz {
+  class AbortController extends AbortController_Instance {
+  }
+  class AbortController_Instance {
+    private noStructuralTyping_: any;
+    abort ( ) : any ;
+    signal : AbortSignal ;
+  }
+}
+declare namespace ಠ_ಠ.clutz {
+  interface AbortSignal {
+    aborted : boolean ;
+    onabort : ( (a : GlobalEvent ) => any ) | null ;
+  }
+}
+declare namespace ಠ_ಠ.clutz {
   class ByteLengthQueuingStrategy extends ByteLengthQueuingStrategy_Instance {
   }
   class ByteLengthQueuingStrategy_Instance {
@@ -153,6 +168,19 @@ declare namespace ಠ_ಠ.clutz {
   }
 }
 declare namespace ಠ_ಠ.clutz {
+  interface RTCRtpTransceiverInit {
+    /**
+     * The direction of the `RTCRtpTransceiver`. Defaults to "sendrecv".
+     */
+    direction ? : string | null ;
+    sendEncodings ? : RTCRtpEncodingParameters [] | null ;
+    /**
+     * The streams to add to the tranceiver's sender.
+     */
+    streams ? : MediaStream [] | null ;
+  }
+}
+declare namespace ಠ_ಠ.clutz {
   /**
    * The ReadableByteStreamController constructor cannot be used directly;
    * it only works on a ReadableStream that is in the middle of being constructed.
@@ -218,6 +246,16 @@ declare namespace ಠ_ಠ.clutz {
   }
 }
 declare namespace ಠ_ಠ.clutz {
+  class StorageManager extends StorageManager_Instance {
+  }
+  class StorageManager_Instance {
+    private noStructuralTyping_: any;
+    estimate ( ) : Promise < { quota : number , usage : number } > ;
+    persist ( ) : Promise < boolean > ;
+    persisted ( ) : Promise < boolean > ;
+  }
+}
+declare namespace ಠ_ಠ.clutz {
   class WritableStream extends WritableStream_Instance {
   }
   class WritableStream_Instance {
@@ -255,4 +293,13 @@ declare namespace ಠ_ಠ.clutz {
     start ? : (a : WritableStreamDefaultController ) => PromiseLike < any > | undefined ;
     write ? : (a : any , b : WritableStreamDefaultController ) => PromiseLike < any > | undefined ;
   }
+}
+declare namespace ಠ_ಠ.clutz.window {
+  /**
+   * Possible values are "sendrecv", "sendonly", "recvonly", and "inactive".
+   */
+  type RTCRtpTransceiverDirection = string ;
+}
+declare namespace ಠ_ಠ.clutz.window {
+  type StorageEstimate = { quota : number , usage : number } ;
 }
