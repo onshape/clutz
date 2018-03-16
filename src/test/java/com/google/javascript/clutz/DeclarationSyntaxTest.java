@@ -25,45 +25,24 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class DeclarationSyntaxTest {
-  private static final FilenameFilter TS_SOURCES_WITHOUT_PLATFORM_EXTERNS =
+  // types_externs_with_platform has the types from general_with_platform, so it can't be compiled
+  // with everything else
+  private static final FilenameFilter TYPES_EXTERNS_WITH_PLATFORM =
       new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-          return TS_SOURCES.accept(dir, name) && !name.contains("_with_platform");
+          return JS_NO_EXTERNS.accept(dir, name) && name.contains("types_externs_with_platform");
         }
       };
 
-  private static final FilenameFilter TS_SOURCES_WITH_PLATFORM_EXTERNS =
+  private static final FilenameFilter JS_NO_EXTERNS_WITHOUT_TYPES_EXTERNS_WITH_PLATFORM =
       new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
           // with incremental mode, _with_platform is going away, and a recent change makes our testing
           // strategy for types_externs_with_platform not work, so special case it and remove when we
           // stop doing _with_platform tests
-          return TS_SOURCES.accept(dir, name)
-              && name.contains("_with_platform")
-              && !name.contains("types_externs_with_platform");
-        }
-      };
-
-  private static final FilenameFilter JS_NO_EXTERNS_WITHOUT_PLATFORM_EXTERNS =
-      new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          return JS_NO_EXTERNS.accept(dir, name) && !name.contains("_with_platform");
-        }
-      };
-
-  private static final FilenameFilter JS_NO_EXTERNS_WITH_PLATFORM_EXTERNS =
-      new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          // with incremental mode, _with_platform is going away, and a recent change makes our testing
-          // strategy for types_externs_with_platform not work, so special case it and remove when we
-          // stop doing _with_platform tests
-          return JS_NO_EXTERNS.accept(dir, name)
-              && name.contains("_with_platform")
-              && !name.contains("types_externs_with_platform");
+          return JS_NO_EXTERNS.accept(dir, name) && !name.contains("types_externs_with_platform");
         }
       };
 
@@ -104,14 +83,16 @@ public class DeclarationSyntaxTest {
   public void testDeclarationSyntax() throws Exception {
     List<File> inputs =
         DeclarationGeneratorTests.getTestInputFilesNoPartial(
-            JS_NO_EXTERNS_WITHOUT_PLATFORM_EXTERNS);
+            JS_NO_EXTERNS_WITHOUT_TYPES_EXTERNS_WITH_PLATFORM);
     doTestDeclarationSyntax(inputs);
   }
 
   @Test
-  public void testDeclarationSyntaxWithPlatformExterns() throws Exception {
+  public void testDeclarationSyntaxTypesExternsWithPlatform() throws Exception {
+    // types_externs_with_platform has the types from general_with_platform, so it can't be compiled
+    // with everything else
     List<File> inputs =
-        DeclarationGeneratorTests.getTestInputFilesNoPartial(JS_NO_EXTERNS_WITH_PLATFORM_EXTERNS);
+        DeclarationGeneratorTests.getTestInputFilesNoPartial(TYPES_EXTERNS_WITH_PLATFORM);
     doTestDeclarationSyntax(inputs);
   }
 
@@ -147,13 +128,13 @@ public class DeclarationSyntaxTest {
 
   @Test
   public void testDeclarationUsage() throws Exception {
-    doTestDeclarationUsage(TS_SOURCES_WITHOUT_PLATFORM_EXTERNS);
+    doTestDeclarationUsage(TS_SOURCES);
   }
 
-  @Test
-  public void testDeclarationUsageWithPlatformExterns() throws Exception {
-    doTestDeclarationUsage(TS_SOURCES_WITH_PLATFORM_EXTERNS);
-  }
+  // @Test
+  // public void testDeclarationUsageWithPlatformExterns() throws Exception {
+  //   doTestDeclarationUsage(TS_SOURCES_WITH_PLATFORM_EXTERNS);
+  // }
 
   private void doTestDeclarationUsage(FilenameFilter filenameFilter) throws Exception {
     List<File> inputs = DeclarationGeneratorTests.getTestInputFilesNoPartial(filenameFilter);
